@@ -1,0 +1,134 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A001 /* ClipboardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001; };
+		A002 /* ClipboardAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002; };
+		A003 /* ClipboardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F003; };
+		A005 /* SnippetEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005; };
+		A006 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006; };
+		A007 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007; };
+		A008 /* AppGroup.swift app */ = {isa = PBXBuildFile; fileRef = F008; };
+		A009 /* ClipboardItem.swift app */ = {isa = PBXBuildFile; fileRef = F009; };
+		A010 /* ClipboardStore.swift app */ = {isa = PBXBuildFile; fileRef = F010; };
+		A012 /* PrivacyInfo in Resources */ = {isa = PBXBuildFile; fileRef = F014; };
+		A013 /* Localizable.xcstrings app */ = {isa = PBXBuildFile; fileRef = F020; };
+		B001 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012; };
+		B008 /* AppGroup.swift keyboard */ = {isa = PBXBuildFile; fileRef = F008; };
+		B009 /* ClipboardItem.swift keyboard */ = {isa = PBXBuildFile; fileRef = F009; };
+		B010 /* ClipboardStore.swift keyboard */ = {isa = PBXBuildFile; fileRef = F010; };
+		B012 /* PrivacyInfo keyboard */ = {isa = PBXBuildFile; fileRef = F014; };
+		B013 /* Localizable.xcstrings keyboard */ = {isa = PBXBuildFile; fileRef = F020; };
+		C001 /* ClipboardStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013; };
+		C008 /* AppGroup.swift tests */ = {isa = PBXBuildFile; fileRef = F008; };
+		C009 /* ClipboardItem.swift tests */ = {isa = PBXBuildFile; fileRef = F009; };
+		C010 /* ClipboardStore.swift tests */ = {isa = PBXBuildFile; fileRef = F010; };
+		E001 /* ClipboardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019; };
+		D001 /* Keyboard extension embed */ = {isa = PBXBuildFile; fileRef = P002; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		X001 = {isa = PBXContainerItemProxy; containerPortal = PROJ; proxyType = 1; remoteGlobalIDString = T002; remoteInfo = ClipboardKeyboard; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CP001 = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (D001, ); name = "Embed App Extensions"; runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/ClipboardApp.swift; sourceTree = "<group>"; };
+		F002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/ClipboardAppModel.swift; sourceTree = "<group>"; };
+		F003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ClipboardListView.swift; sourceTree = "<group>"; };
+		F005 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SnippetEditor.swift; sourceTree = "<group>"; };
+		F006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
+		F007 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/OnboardingView.swift; sourceTree = "<group>"; };
+		F008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants/AppGroup.swift; sourceTree = "<group>"; };
+		F009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/ClipboardItem.swift; sourceTree = "<group>"; };
+		F010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage/ClipboardStore.swift; sourceTree = "<group>"; };
+		F012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		F013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardStoreTests.swift; sourceTree = "<group>"; };
+		F014 = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F015 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F016 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClipboardApp.entitlements; sourceTree = "<group>"; };
+		F017 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F018 = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ClipboardKeyboard.entitlements; sourceTree = "<group>"; };
+		F019 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardUITests.swift; sourceTree = "<group>"; };
+		F020 = {isa = PBXFileReference; lastKnownFileType = text.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		P001 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		P002 = {isa = PBXFileReference; explicitFileType = wrapper.app-extension; includeInIndex = 0; path = ClipboardKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		P003 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipboardStoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		P004 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipboardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FW001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FW002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FW003 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FW004 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GROOT = {isa = PBXGroup; children = (GAPP, GKEY, GSHARED, GTEST, GUITEST, GRES, F014, GPROD, ); sourceTree = "<group>"; };
+		GAPP = {isa = PBXGroup; path = ClipboardApp; sourceTree = "<group>"; children = (F001, F002, F003, F005, F006, F007, F015, F016, ); };
+		GKEY = {isa = PBXGroup; path = ClipboardKeyboard; sourceTree = "<group>"; children = (F012, F017, F018, ); };
+		GSHARED = {isa = PBXGroup; path = Shared; sourceTree = "<group>"; children = (F008, F009, F010, ); };
+		GTEST = {isa = PBXGroup; path = Tests; sourceTree = "<group>"; children = (F013, ); };
+		GUITEST = {isa = PBXGroup; path = UITests; sourceTree = "<group>"; children = (F019, ); };
+		GRES = {isa = PBXGroup; path = Resources; sourceTree = "<group>"; children = (F020, ); };
+		GPROD = {isa = PBXGroup; children = (P001, P002, P003, P004, ); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T001 = {isa = PBXNativeTarget; buildConfigurationList = CL001; buildPhases = (S001, R001, FW001, CP001, ); buildRules = (); dependencies = (DEP001, ); name = Clipboard; productName = Clipboard; productReference = P001; productType = "com.apple.product-type.application"; };
+		T002 = {isa = PBXNativeTarget; buildConfigurationList = CL002; buildPhases = (S002, R002, FW002, ); buildRules = (); dependencies = (); name = ClipboardKeyboard; productName = ClipboardKeyboard; productReference = P002; productType = "com.apple.product-type.app-extension"; };
+		T003 = {isa = PBXNativeTarget; buildConfigurationList = CL003; buildPhases = (S003, FW003, ); buildRules = (); dependencies = (); name = ClipboardStoreTests; productName = ClipboardStoreTests; productReference = P003; productType = "com.apple.product-type.bundle.unit-test"; };
+		T004 = {isa = PBXNativeTarget; buildConfigurationList = CL004; buildPhases = (S004, FW004, ); buildRules = (); dependencies = (); name = ClipboardUITests; productName = ClipboardUITests; productReference = P004; productType = "com.apple.product-type.bundle.ui-testing"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJ = {isa = PBXProject; attributes = { BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 2630; LastUpgradeCheck = 2630; TargetAttributes = { T001 = {CreatedOnToolsVersion = 26.3;}; T002 = {CreatedOnToolsVersion = 26.3;}; T003 = {CreatedOnToolsVersion = 26.3;}; T004 = {CreatedOnToolsVersion = 26.3;}; }; }; buildConfigurationList = CLPROJ; compatibilityVersion = "Xcode 26.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, es, Base, ); mainGroup = GROOT; productRefGroup = GPROD; projectDirPath = ""; projectRoot = ""; targets = (T001, T002, T003, T004, ); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		R001 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A012, A013, ); runOnlyForDeploymentPostprocessing = 0; };
+		R002 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B012, B013, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		S001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A001,A002,A003,A005,A006,A007,A008,A009,A010,); runOnlyForDeploymentPostprocessing = 0; };
+		S002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B001,B008,B009,B010,); runOnlyForDeploymentPostprocessing = 0; };
+		S003 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (C001,C008,C009,C010,); runOnlyForDeploymentPostprocessing = 0; };
+		S004 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (E001, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DEP001 = {isa = PBXTargetDependency; target = T002; targetProxy = X001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		PCD = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_CXX_LANGUAGE_STANDARD = "gnu++20"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_VERSION = 5.0; }; name = Debug; };
+		PCR = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_CXX_LANGUAGE_STANDARD = "gnu++20"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; }; name = Release; };
+		ACD = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = ""; CODE_SIGN_ENTITLEMENTS = ClipboardApp/ClipboardApp.entitlements; CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ClipboardApp/Info.plist; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.app; PRODUCT_NAME = Clipboard; SDKROOT = iphoneos; SUPPORTS_MACCATALYST = NO; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		ACR = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = ""; CODE_SIGN_ENTITLEMENTS = ClipboardApp/ClipboardApp.entitlements; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ClipboardApp/Info.plist; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.app; PRODUCT_NAME = Clipboard; SDKROOT = iphoneos; SUPPORTS_MACCATALYST = NO; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		KCD = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = ClipboardKeyboard/ClipboardKeyboard.entitlements; CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ClipboardKeyboard/Info.plist; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.app.keyboard; PRODUCT_NAME = ClipboardKeyboard; SDKROOT = iphoneos; SKIP_INSTALL = YES; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		KCR = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = ClipboardKeyboard/ClipboardKeyboard.entitlements; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = ClipboardKeyboard/Info.plist; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.app.keyboard; PRODUCT_NAME = ClipboardKeyboard; SDKROOT = iphoneos; SKIP_INSTALL = YES; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		TCD = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = ""; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.tests; PRODUCT_NAME = ClipboardStoreTests; SDKROOT = iphoneos; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; TEST_HOST = ""; }; name = Debug; };
+		TCR = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = ""; GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.tests; PRODUCT_NAME = ClipboardStoreTests; SDKROOT = iphoneos; TEST_HOST = ""; }; name = Release; };
+		UCD = {isa = XCBuildConfiguration; buildSettings = {GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.uitests; PRODUCT_NAME = ClipboardUITests; SDKROOT = iphoneos; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; TEST_TARGET_NAME = Clipboard; }; name = Debug; };
+		UCR = {isa = XCBuildConfiguration; buildSettings = {GENERATE_INFOPLIST_FILE = YES; PRODUCT_BUNDLE_IDENTIFIER = com.iosdashclipboard.uitests; PRODUCT_NAME = ClipboardUITests; SDKROOT = iphoneos; TEST_TARGET_NAME = Clipboard; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CLPROJ = {isa = XCConfigurationList; buildConfigurations = (PCD, PCR, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		CL001 = {isa = XCConfigurationList; buildConfigurations = (ACD, ACR, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		CL002 = {isa = XCConfigurationList; buildConfigurations = (KCD, KCR, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		CL003 = {isa = XCConfigurationList; buildConfigurations = (TCD, TCR, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		CL004 = {isa = XCConfigurationList; buildConfigurations = (UCD, UCR, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = PROJ;
+}

@@ -1,0 +1,25 @@
+# Apple API decisions
+
+Checked against Apple documentation and the installed Xcode 26.3 headers on 22 September 2026.
+
+| API | Minimum | Use and fallback |
+| --- | --- | --- |
+| `UIInputViewController` / `UITextDocumentProxy.insertText(_:)` | iOS 8 | The keyboard inserts the selected stored string directly into the active field. It never copies an item back to the pasteboard first. |
+| `needsInputModeSwitchKey` and `handleInputModeList(from:with:)` | iOS 11 / iOS 10 | The globe button is shown only when required and sends all touch events to Apple's input-mode list handler. |
+| App Groups | iOS 8 | Both targets declare `group.com.iosdashclipboard.shared`; the app writes and the keyboard reads it. Missing containers surface an error, with no sandbox fallback. |
+| SwiftData: `@Model`, `ModelContainer`, `ModelContext`, `ModelConfiguration` | iOS 17 | Both targets use the same explicit store URL in the App Group. `cloudKitDatabase: .none` keeps persistence local. Contexts and persistent models remain confined to individual operations; autosave is explicitly disabled and save errors are handled. There is no JSON persistence fallback. |
+| `ModelConfiguration.allowsSave` | iOS 17 | The keyboard opens existing storage with `false` without Full Access. Real simulator keyboard tests verified reading and inserting in this mode; only writers initialize and migrate storage. |
+| `hasFullAccess` / `RequestsOpenAccess` | iOS 11 / iOS 8 | The keyboard sets `RequestsOpenAccess=true`, checks `hasFullAccess` on appearance, and has a read-only mode without it. Apple documents shared-container reading without Full Access and writing only with it; the elevated mode enables saving from clipboard, favorite, and delete actions. |
+| `UIButton.Configuration.filled()` / SwiftUI `.borderedProminent` | iOS 15 | The app and keyboard expose the exact, blue capsule label `Save from clipboard` using public native button configuration. [`UIPasteControl`](https://developer.apple.com/documentation/uikit/uipastecontrol) has public color, corner, image, and display-mode configuration but no arbitrary visible title, so it cannot meet that copy requirement. |
+| `UIPasteboard.general` | iOS 3 | The button handler reads `string`, then URL text only after the explicit tap. It never polls or reads at rendering time; iOS can show its native paste authorization for programmatic access. |
+| `UITextDocumentProxy.insertText(_:)` | iOS 8 | Tapping a stored snippet directly inserts it into the active field. Saving from clipboard never inserts that text. |
+| SwiftUI system components | iOS 17 | `NavigationStack`, `List`, `searchable`, sheets, toolbars, context menus, and system colors adapt to light/dark mode and Dynamic Type. |
+| Liquid Glass | iOS 26 when available | The UI uses system SwiftUI/UIKit controls and materials only. It calls no iOS 26-only Liquid Glass API, so earlier supported versions retain native system appearance. |
+
+Sources: [UIPasteControl](https://developer.apple.com/documentation/uikit/uipastecontrol), [UIPasteboard](https://developer.apple.com/documentation/uikit/uipasteboard), [Creating a custom keyboard](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [UIInputViewController](https://developer.apple.com/documentation/uikit/uiinputviewcontroller), [Configuring open access](https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard), [App Groups](https://developer.apple.com/documentation/xcode/configuring-app-groups), and [Adopting Liquid Glass](https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass).
+
+SwiftData sources: [ModelConfiguration](https://developer.apple.com/documentation/swiftdata/modelconfiguration), [allowsSave](https://developer.apple.com/documentation/swiftdata/modelconfiguration/allowssave), [ModelContainer](https://developer.apple.com/documentation/swiftdata/modelcontainer), and [Preserving model data across launches](https://developer.apple.com/documentation/swiftdata/preserving-your-apps-model-data-across-launches). JSON import is a one-time conversion from the previous format, rather than a SwiftData schema migration.
+
+## Development skills
+
+Apple documents built-in agent skills in [Xcode 27 release notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes) and [Extending and customizing agents](https://developer.apple.com/documentation/xcode/extending-and-customizing-agents). This Mac has Xcode 26.3 and `xcrun --find agent` did not find the export utility. No independently verified, separately downloadable Apple SwiftData skill was installed. Community skills were identified but not installed; this implementation followed Apple's documentation and the installed SDK declarations.
