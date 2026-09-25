@@ -53,7 +53,7 @@ struct ClipboardListView: View {
                 }
             }
             .sheet(isPresented: $showingNewItem) { NewSnippetSheet(model: model) }
-            .sheet(isPresented: $showingSettings) { SettingsView() }
+            .sheet(isPresented: $showingSettings) { SettingsView(model: model) }
             .sheet(isPresented: Binding(get: { !hasCompletedOnboarding }, set: { hasCompletedOnboarding = !$0 })) { OnboardingView() }
         }
     }

@@ -50,6 +50,18 @@ final class ClipboardUITests: XCTestCase {
         XCTAssertEqual(app.searchFields.firstMatch.placeholderValue, "Buscar textos")
     }
 
+    func testICloudSyncIsOffByDefaultInAppSettings() throws {
+        app.terminate()
+        app.launchArguments = ["-UITestResetOnboarding", "-UITestDisableICloudSync"]
+        app.launch()
+        try completeOnboardingIfNeeded()
+        app.buttons["appSettingsControl"].tap()
+        let sync = app.switches["settingsICloudSyncToggle"]
+        XCTAssertTrue(sync.waitForExistence(timeout: 5), app.debugDescription)
+        XCTAssertEqual(sync.value as? String, "0")
+        XCTAssertTrue(["Sync with iCloud", "Sincronizar con iCloud"].contains(sync.label))
+    }
+
     func testKeyboardExtensionSystemFlowAttempt() throws {
         try completeOnboardingIfNeeded()
         let seedToken = UUID().uuidString

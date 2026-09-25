@@ -65,10 +65,23 @@ final class ClipboardStoreTests: XCTestCase {
         XCTAssertEqual(try reader.load(), [])
         XCTAssertEqual(try directorySnapshot(), emptyDirectory)
         XCTAssertThrowsError(try reader.add(text: "nope")) { XCTAssertEqual($0 as? ClipboardStoreError, .readOnly) }
+        XCTAssertThrowsError(try reader.setCloudSyncEnabled(true)) { XCTAssertEqual($0 as? ClipboardStoreError, .readOnly) }
         let writable = store(); _ = try writable.add(text: "existing")
         let afterWrite = try directorySnapshot()
         XCTAssertEqual(try reader.load().map(\.text), ["existing"])
         XCTAssertEqual(try directorySnapshot(), afterWrite, "The read-only SwiftData context must not create SQLite sidecars.")
+    }
+
+    func testModelsRemainCompatibleWithPrivateCloudKitDatabase() {
+        let schema = Schema([StoredClipboardItem.self, ClipboardStoreMetadata.self])
+        for entity in schema.entities {
+            XCTAssertTrue(entity.uniquenessConstraints.isEmpty, "CloudKit cannot mirror unique constraints on \(entity.name)")
+            for attribute in entity.attributes {
+                XCTAssertFalse(attribute.isUnique, "CloudKit cannot mirror \(entity.name).\(attribute.name) as unique")
+                XCTAssertTrue(attribute.isOptional || attribute.defaultValue != nil,
+                              "CloudKit needs a default for \(entity.name).\(attribute.name)")
+            }
+        }
     }
 
     func testCorruptFileIsReportedAndNeverOverwritten() throws {

@@ -1,6 +1,20 @@
 # Validation record
 
-Validated on 22 September 2026 using Xcode 26.3, the iOS 26.2 SDK, and an iOS 26.3 simulator on an x86_64 host. The current storage implementation uses SwiftData.
+The original SwiftData baseline below was validated on 22 September 2026 using Xcode 26.3, the iOS 26.2 SDK, and an iOS 26.3 simulator on an x86_64 host.
+
+## Optional private iCloud sync — 25 September 2026
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Debug build of app and keyboard for iOS Simulator | Passed without Swift compiler warnings | `/tmp/iosclipboard-icloud-build.log` |
+| Release build for generic iOS device | Passed; compile and link only | `/tmp/iosclipboard-icloud-release.log` |
+| SwiftData storage suite, including CloudKit schema and read-only extension guards | 16 passed, 0 failed | `/tmp/iosclipboard-icloud-tests-final.log` |
+| Pre-CloudKit SwiftData schema opened with the new model | Passed on macOS SwiftData: UUID, Unicode text, date, favorite, and migration marker preserved | `/tmp/iosclipboard-pre-cloud-schema-migration.log` |
+| App settings opt-in UI test | Passed: iCloud switch is present in app Settings, off by default; Spanish label also observed | `/tmp/iosclipboard-icloud-ui-rerun.log` |
+
+The first opt-in UI run failed solely because the simulator displayed the correctly translated Spanish switch label and the assertion expected English. The assertion now accepts either locale, and the focused rerun passed. The keyboard has no CloudKit entitlement and opens the shared store with `.none`. The app only creates a private CloudKit container when the setting is on; the user's preference is written after container creation succeeds. Existing JSON import completes before the first enable attempt.
+
+**Requires a signed Apple Developer setup:** register `iCloud.com.iosclipboard.app`, use matching iCloud/APNs provisioning, run the signed Debug app once with `-InitializeCloudKitSchema`, and deploy that schema to production in CloudKit Console. End-to-end export/import between two devices on the same Apple Account, behavior while offline, account changes, and stopping sync after toggling off have not been verified here. A local compile or unsigned simulator run cannot prove those CloudKit operations.
 
 ## Automated checks
 
@@ -54,19 +68,19 @@ The iPhone 17 simulator already contained ten synthetic snippets from the previo
 - The migration marker was `verified`.
 - The old `clipboard-items-v1.json` had been removed.
 
-The audit snapshot is `/tmp/iosdash-legacy-migration-evidence.json`. The actual shared container contains `clipboard-items.store` and SQLite auxiliary files. CloudKit is explicitly disabled. Test data was synthetic; no personal clipboard content was used.
+The audit snapshot is `/tmp/iosdash-legacy-migration-evidence.json`. The actual shared container contains `clipboard-items.store` and SQLite auxiliary files. CloudKit was explicitly disabled in this earlier migration baseline; it is now optional and off by default. Test data was synthetic; no personal clipboard content was used.
 
 ## Commands
 
 Ad-hoc signing provides the App Group entitlement for simulator execution without a developer account. Use the simulator architecture appropriate for the host; this Mac uses x86_64.
 
 ```sh
-xcodebuild -project iOSDashClipboard.xcodeproj -scheme Clipboard \
+xcodebuild -project iOSClipboard.xcodeproj -scheme Clipboard \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
   -derivedDataPath /tmp/iOSDashClipboard-swiftdata \
   CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- ARCHS=x86_64 test
 
-xcodebuild -project iOSDashClipboard.xcodeproj -scheme Clipboard \
+xcodebuild -project iOSClipboard.xcodeproj -scheme Clipboard \
   -configuration Release -destination 'generic/platform=iOS' \
   -derivedDataPath /tmp/iOSDashClipboard-swiftdata-release \
   CODE_SIGNING_ALLOWED=NO build

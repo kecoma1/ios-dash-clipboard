@@ -1,4 +1,6 @@
-# iOS Dash Clipboard — plan de construcción
+# iOS Clipboard — plan de construcción
+
+**Actualización 25-09-2026:** la petición posterior añade sincronización opcional con la base de datos privada de CloudKit, activada mediante un switch en los ajustes de la app. Las menciones originales de «sin cloud» describen el alcance inicial y quedan sustituidas por esta decisión. El teclado sigue usando el almacén compartido local y no accede a CloudKit directamente.
 
 Fecha: 22 de septiembre de 2026. Estado: plan preparado antes de delegar la implementación.
 
@@ -10,7 +12,7 @@ Tras un ensayo breve sin ese flujo, el usuario restauró el guardado explícito 
 
 Aplicación nativa Swift cuyo producto principal es un Custom Keyboard Extension: copiar texto → abrir el teclado → guardar explícitamente → tocar el snippet para insertarlo mediante `textDocumentProxy.insertText()`.
 
-Repositorio local: `/Users/kevin/Documents/Github/ios-dash-clipboard`. Nombre del producto: **iOS Dash Clipboard**. Dos targets de producto (app y keyboard), más targets de tests cuando sean necesarios. Sin IA, backend, cuentas, analytics, anuncios, servicios de red, sincronización cloud ni frameworks externos de UI. No publicar un repositorio remoto ni distribuir la app como parte de este trabajo.
+Repositorio local: `/Users/kevin/Documents/Github/ios-dash-clipboard`. Nombre del producto: **iOS Clipboard**. Dos targets de producto (app y keyboard), más targets de tests cuando sean necesarios. Sin IA, backend, cuentas, analytics, anuncios, servicios de red, sincronización cloud ni frameworks externos de UI. No publicar un repositorio remoto ni distribuir la app como parte de este trabajo.
 
 La implementación la realizará un agente **gpt-5.6-terra**, una vez terminado este plan. El agente principal se ocupa del plan, la revisión y la coordinación; no escribe la aplicación.
 
@@ -42,7 +44,7 @@ La documentación actual de open access permite lectura del contenedor compartid
 ## Estructura propuesta
 
 ```
-iOSDashClipboard.xcodeproj/
+iOSClipboard.xcodeproj/
 ClipboardApp/
   App/
   Views/

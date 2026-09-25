@@ -18,7 +18,7 @@ final class KeyboardViewController: UIInputViewController {
     private var allItems: [ClipboardItem] = []
     private var visibleItems: [ClipboardItem] = []
     private var store: ClipboardStore?
-    private let ioQueue = DispatchQueue(label: "com.iosdashclipboard.keyboard-storage", qos: .userInitiated)
+    private let ioQueue = DispatchQueue(label: "com.iosclipboard.keyboard-storage", qos: .userInitiated)
 
     override func loadView() {
         // UIKit supplies the keyboard's own tinting and blur when this view is hosted

@@ -1,16 +1,25 @@
 import Foundation
 import Combine
+import CoreData
 
 @MainActor
 final class ClipboardAppModel: ObservableObject {
     @Published private(set) var items: [ClipboardItem] = []
     @Published var errorMessage: String?
+    @Published private(set) var isCloudSyncEnabled: Bool
+    @Published private(set) var isChangingCloudSync = false
+    @Published var cloudSyncErrorMessage: String?
 
     private let store: ClipboardStore?
-    private let ioQueue = DispatchQueue(label: "com.iosdashclipboard.storage", qos: .userInitiated)
+    private let ioQueue = DispatchQueue(label: "com.iosclipboard.storage", qos: .userInitiated)
+    private var cloudEventObserver: NSObjectProtocol?
 
-    init(store: ClipboardStore? = try? ClipboardStore(access: .readWrite)) {
+    init(store: ClipboardStore? = try? ClipboardStore(
+        access: .readWrite,
+        cloudSyncEnabled: UserDefaults.standard.bool(forKey: AppGroup.cloudSyncPreferenceKey)
+    )) {
         self.store = store
+        isCloudSyncEnabled = UserDefaults.standard.bool(forKey: AppGroup.cloudSyncPreferenceKey)
         if store == nil { errorMessage = ClipboardStoreError.sharedContainerUnavailable.localizedDescription }
         CFNotificationCenterAddObserver(
             CFNotificationCenterGetDarwinNotifyCenter(),
@@ -21,10 +30,60 @@ final class ClipboardAppModel: ObservableObject {
                 DispatchQueue.main.async { model.reload() }
             },
             AppGroup.changeNotification as CFString, nil, .deliverImmediately)
+        cloudEventObserver = NotificationCenter.default.addObserver(
+            forName: NSPersistentCloudKitContainer.eventChangedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let event = notification.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
+                    as? NSPersistentCloudKitContainer.Event,
+                  event.endDate != nil else { return }
+            let imported = event.type == .import && event.succeeded
+            let failed = !event.succeeded
+            Task { @MainActor [weak self] in
+                guard let self, self.isCloudSyncEnabled else { return }
+                if imported {
+                    self.reload()
+                    CFNotificationCenterPostNotification(
+                        CFNotificationCenterGetDarwinNotifyCenter(),
+                        CFNotificationName(AppGroup.changeNotification as CFString),
+                        nil, nil, true
+                    )
+                } else if failed {
+                    self.cloudSyncErrorMessage = String(localized: "iCloud couldn’t sync right now. Your snippets remain available on this device.")
+                }
+            }
+        }
     }
 
     deinit {
         CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), Unmanaged.passUnretained(self).toOpaque(), CFNotificationName(AppGroup.changeNotification as CFString), nil)
+        if let cloudEventObserver { NotificationCenter.default.removeObserver(cloudEventObserver) }
+    }
+
+    func setCloudSyncEnabled(_ enabled: Bool) {
+        guard !isChangingCloudSync, enabled != isCloudSyncEnabled else { return }
+        guard let store else {
+            cloudSyncErrorMessage = ClipboardStoreError.sharedContainerUnavailable.localizedDescription
+            return
+        }
+        isChangingCloudSync = true
+        ioQueue.async { [weak self] in
+            let result = Result { try store.setCloudSyncEnabled(enabled) }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.isChangingCloudSync = false
+                switch result {
+                case .success:
+                    UserDefaults.standard.set(enabled, forKey: AppGroup.cloudSyncPreferenceKey)
+                    self.isCloudSyncEnabled = enabled
+                    self.cloudSyncErrorMessage = nil
+                    self.reload()
+                case let .failure(error):
+                    self.cloudSyncErrorMessage = error.localizedDescription
+                }
+            }
+        }
     }
 
     func reload() {
@@ -33,7 +92,7 @@ final class ClipboardAppModel: ObservableObject {
             let result = Result { try store.load() }
             DispatchQueue.main.async {
                 switch result {
-                case let .success(items): self?.items = items
+                case let .success(items): self?.items = items; self?.errorMessage = nil
                 case let .failure(error): self?.errorMessage = error.localizedDescription
                 }
             }

@@ -12,6 +12,7 @@ enum ClipboardStoreError: LocalizedError, Equatable {
     case unableToCreateDirectory
     case unableToLock
     case unableToWrite
+    case cloudSyncUnavailable
 
     var errorDescription: String? {
         switch self {
@@ -24,16 +25,18 @@ enum ClipboardStoreError: LocalizedError, Equatable {
         case .unableToCreateDirectory: return String(localized: "Couldn’t prepare shared storage.")
         case .unableToLock: return String(localized: "Couldn’t safely update shared storage.")
         case .unableToWrite: return String(localized: "Couldn’t save the change.")
+        case .cloudSyncUnavailable: return String(localized: "Couldn’t start iCloud sync. Your snippets are still on this device.")
         }
     }
 }
 
 @Model
 final class StoredClipboardItem {
-    @Attribute(.unique) var id: UUID
-    var text: String
-    var createdAt: Date
-    var isFavorite: Bool
+    // CloudKit can't enforce SwiftData uniqueness; new snippets receive random UUIDs.
+    var id: UUID = UUID()
+    var text: String = ""
+    var createdAt: Date = Date.now
+    var isFavorite: Bool = false
 
     init(item: ClipboardItem) {
         id = item.id
@@ -49,8 +52,8 @@ final class StoredClipboardItem {
 
 @Model
 final class ClipboardStoreMetadata {
-    @Attribute(.unique) var key: String
-    var value: String
+    var key: String = ""
+    var value: String = ""
 
     init(key: String, value: String) {
         self.key = key
@@ -71,10 +74,15 @@ final class ClipboardStore: @unchecked Sendable {
     private let access: Access
     private let fileManager: FileManager
     private let notificationCenter: CFNotificationCenter
+    private var cloudSyncEnabled: Bool
+    // Keep the mirroring container alive so imports and exports can run after a user action ends.
+    // The app accesses this state on its serial storage queue; the keyboard always uses .none.
+    private var cloudContainer: ModelContainer?
 
     init(
         containerURL: URL,
         access: Access,
+        cloudSyncEnabled: Bool = false,
         fileManager: FileManager = .default,
         notificationCenter: CFNotificationCenter = CFNotificationCenterGetDarwinNotifyCenter()
     ) {
@@ -82,15 +90,40 @@ final class ClipboardStore: @unchecked Sendable {
         self.access = access
         self.fileManager = fileManager
         self.notificationCenter = notificationCenter
+        self.cloudSyncEnabled = cloudSyncEnabled && access == .readWrite
     }
 
-    convenience init(access: Access) throws {
-        try self.init(containerURL: AppGroup.containerURL(), access: access)
+    convenience init(access: Access, cloudSyncEnabled: Bool = false) throws {
+        try self.init(containerURL: AppGroup.containerURL(), access: access, cloudSyncEnabled: cloudSyncEnabled)
     }
 
     private var databaseURL: URL { containerURL.appendingPathComponent(AppGroup.swiftDataStoreFilename) }
     private var legacyDataURL: URL { containerURL.appendingPathComponent(AppGroup.storeFilename) }
     private var lockURL: URL { containerURL.appendingPathComponent(AppGroup.writerLockFilename) }
+
+    /// Called by the containing app on the same serial queue as its storage operations.
+    /// A failed enable leaves the local configuration active and the preference unchanged.
+    func setCloudSyncEnabled(_ enabled: Bool) throws {
+        guard access == .readWrite else { throw ClipboardStoreError.readOnly }
+        guard enabled != cloudSyncEnabled else { return }
+        if enabled {
+            try withWriterLock {
+                // Finish the previous JSON import before CloudKit can import another device's
+                // migration marker into this shared store.
+                try migrateLegacyIfNeeded(lockHeld: true)
+                cloudSyncEnabled = true
+                do { _ = try makeContainer(allowsSave: true) }
+                catch {
+                    cloudContainer = nil
+                    cloudSyncEnabled = false
+                    throw error
+                }
+            }
+        } else {
+            cloudContainer = nil
+            cloudSyncEnabled = false
+        }
+    }
 
     func load() throws -> [ClipboardItem] {
         if access == .readWrite {
@@ -282,16 +315,22 @@ final class ClipboardStore: @unchecked Sendable {
             catch { throw ClipboardStoreError.unableToCreateDirectory }
         }
         let schema = Schema([StoredClipboardItem.self, ClipboardStoreMetadata.self])
+        if cloudSyncEnabled, access == .readWrite, let cloudContainer { return cloudContainer }
         let configuration = ModelConfiguration(
             "Clipboard",
             schema: schema,
             url: databaseURL,
-            allowsSave: allowsSave,
-            cloudKitDatabase: .none
+            allowsSave: cloudSyncEnabled ? true : allowsSave,
+            cloudKitDatabase: cloudSyncEnabled ? .private(AppGroup.cloudKitContainerIdentifier) : .none
         )
         if fileManager.fileExists(atPath: databaseURL.path) { try validateSQLiteHeader() }
-        do { return try ModelContainer(for: schema, configurations: [configuration]) }
+        do {
+            let container = try ModelContainer(for: schema, configurations: [configuration])
+            if cloudSyncEnabled { cloudContainer = container }
+            return container
+        }
         catch {
+            if cloudSyncEnabled { throw ClipboardStoreError.cloudSyncUnavailable }
             throw fileManager.fileExists(atPath: databaseURL.path)
                 ? ClipboardStoreError.corruptData
                 : ClipboardStoreError.sharedContainerUnavailable
